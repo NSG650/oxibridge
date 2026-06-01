@@ -10,6 +10,7 @@ mod broadcast;
 mod config;
 mod core;
 mod discord;
+mod irc;
 mod storage;
 mod telegram;
 pub use config::Config;

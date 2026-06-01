@@ -17,9 +17,10 @@ impl Author {
     pub fn full_name(&self, length: Option<usize>) -> String {
         let length = length.unwrap_or(32);
 
-        let source: &str= match self.source {
+        let source: &str = match self.source {
             Source::Discord => "dc",
             Source::Telegram => "tg",
+            Source::Irc => "irc",
         };
 
         if let Some(display_name) = &self.display_name {
