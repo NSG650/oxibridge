@@ -12,11 +12,10 @@ pub async fn to_core_message(message: &Message) -> Result<core::Message> {
         irc::client::prelude::Command::PRIVMSG(_, content) => {
             return Ok(core::Message::new(author, content.clone(), Vec::new(), None, None).await);
         }
-        irc::client::prelude::Command::NOTICE(channel, content) => {
-            let server_username = format!("Server_notice_for_{}", channel);
+        irc::client::prelude::Command::NOTICE(_, content) => {
             let server_author = core::Author {
-                username: server_username.clone(),
-                display_name: Some(server_username.clone()),
+                username: String::from("SERVER"),
+                display_name: Some(String::from("SERVER")),
                 avatar: None,
                 source: Source::Irc,
             };
