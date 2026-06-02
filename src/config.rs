@@ -34,7 +34,7 @@ pub struct R2Config {
 pub struct GroupConfig {
     pub telegram_chat: Option<i64>,
     pub discord: Option<GroupDiscordConfig>,
-    pub irc: Option<String>,
+    pub irc_channel: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

@@ -6,6 +6,8 @@ edition = "2021"
 [dependencies]
 async-tempfile = "0.6.0"
 color-eyre = "0.6.3"
+futures = "0.3.32"
+irc = "1.1.0"
 markdown = "1.0.0-alpha.21"
 regex = "1.11.1"
 reqwest = { version = "0.12", default-features = false, features = [

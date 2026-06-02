@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use broadcast::Broadcaster;
 use color_eyre::{eyre::Result, Section};
+use futures::future::OptionFuture;
 use tokio::sync::Mutex;
 use tracing::*;
 use tracing_subscriber::{filter::LevelFilter, layer::SubscriberExt, EnvFilter, Layer};
@@ -60,6 +61,14 @@ async fn main() -> Result<()> {
         discord::DiscordBridge::new(config.clone(), broadcaster.clone(), storage.clone()).await?,
     );
 
+    let irc = if let Some(_) = &config.shared.irc {
+        Some(Arc::new(
+            irc::IrcBridge::new(config.clone(), broadcaster.clone()).await?,
+        ))
+    } else {
+        None
+    };
+
     {
         broadcaster
             .lock()
@@ -68,7 +77,15 @@ async fn main() -> Result<()> {
             .add_receiver(discord.clone());
     }
 
-    tokio::join!(telegram.start(), discord.start());
+    let mut handles = vec![
+        tokio::spawn(async move { telegram.start().await }),
+        tokio::spawn(async move { discord.start().await }),
+    ];
+    if let Some(i) = irc {
+        broadcaster.lock().await.add_receiver(i.clone());
+        handles.push(tokio::spawn(async move { i.start().await }));
+    }
+    futures::future::join_all(handles).await;
 
     Ok(())
 }
