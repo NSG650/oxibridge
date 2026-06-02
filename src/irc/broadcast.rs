@@ -4,6 +4,7 @@ use crate::{
 };
 use color_eyre::Result;
 use serenity::async_trait;
+use std::fmt::Write;
 use tracing::*;
 
 use super::IrcBridge;
@@ -19,20 +20,27 @@ impl BroadcastReceiver for IrcBridge {
 
         match event {
             MessageEvent::Create(core_msg) => {
-                let text = if let Some(reply_author) = &core_msg.reply_author {
-                    format!(
-                        "{} -> {}: {}",
-                        core_msg.author.full_name(Some(0)),
-                        reply_author.full_name(Some(0)),
-                        core_msg.content
-                    )
+                let mut text = String::new();
+                let author_name = core_msg.author.full_name(Some(0));
+
+                if let Some(reply_author) = &core_msg.reply_author {
+                    let _ = write!(
+                        text,
+                        "{} -> {}",
+                        author_name,
+                        reply_author.full_name(Some(0))
+                    );
                 } else {
-                    format!(
-                        "{}: {}",
-                        core_msg.author.full_name(Some(0)),
-                        core_msg.content
-                    )
-                };
+                    text.push_str(&author_name);
+                }
+
+                if !core_msg.attachments.is_empty() {
+                    text.push_str(": [Sent an attachment] ");
+                } else {
+                    text.push_str(": ");
+                }
+
+                text.push_str(&core_msg.content);
                 self.client.send_privmsg(irc_channel, text)?;
             }
 
