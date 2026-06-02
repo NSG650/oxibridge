@@ -2,7 +2,7 @@ use crate::{
     broadcast::{BroadcastReceiver, MessageEvent, Source},
     config::GroupConfig,
 };
-use color_eyre::{eyre::eyre, Result};
+use color_eyre::Result;
 use serenity::async_trait;
 use tracing::*;
 
@@ -19,11 +19,20 @@ impl BroadcastReceiver for IrcBridge {
 
         match event {
             MessageEvent::Create(core_msg) => {
-                let text = format!(
-                    "{}: {}",
-                    core_msg.author.full_name(Some(0)),
-                    core_msg.content
-                );
+                let text = if let Some(reply_author) = &core_msg.reply_author {
+                    format!(
+                        "{} -> {}: {}",
+                        core_msg.author.full_name(Some(0)),
+                        reply_author.full_name(Some(0)),
+                        core_msg.content
+                    )
+                } else {
+                    format!(
+                        "{}: {}",
+                        core_msg.author.full_name(Some(0)),
+                        core_msg.content
+                    )
+                };
                 self.client.send_privmsg(irc_channel, text)?;
             }
 
