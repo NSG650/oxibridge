@@ -25,7 +25,6 @@ impl Author {
 
         if let Some(display_name) = &self.display_name {
             let full_name = format!("{} (@{}/{})", display_name, source, self.username);
-
             if length != 0 && full_name.len() > length {
                 display_name.clone()
             } else {
