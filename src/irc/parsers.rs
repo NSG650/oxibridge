@@ -3,13 +3,13 @@ use crate::{
     core::{self},
 };
 use color_eyre::eyre::Result;
-use irc::client::{prelude::Client, ClientStream};
+use irc::client::prelude::Message;
 
-pub async fn to_core_message(message: &irc::client::prelude::Message) -> Result<core::Message> {
+pub async fn to_core_message(message: &Message) -> Result<core::Message> {
     let author = to_core_author(message)?;
 
     match &message.command {
-        irc::client::prelude::Command::PRIVMSG(channel, content) => {
+        irc::client::prelude::Command::PRIVMSG(_, content) => {
             return Ok(core::Message::new(author, content.clone(), Vec::new(), None, None).await);
         }
         irc::client::prelude::Command::NOTICE(channel, content) => {

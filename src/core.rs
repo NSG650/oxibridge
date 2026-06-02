@@ -64,6 +64,29 @@ impl From<PartialAuthor> for Author {
     }
 }
 
+impl PartialAuthor {
+    pub fn full_name(&self, length: Option<usize>) -> String {
+        let length = length.unwrap_or(32);
+
+        let source: &str = match self.source {
+            Source::Discord => "dc",
+            Source::Telegram => "tg",
+            Source::Irc => "irc",
+        };
+
+        if let Some(display_name) = &self.display_name {
+            let full_name = format!("{} (@{}/{})", display_name, source, self.username);
+            if length != 0 && full_name.len() > length {
+                display_name.clone()
+            } else {
+                full_name
+            }
+        } else {
+            self.username.clone()
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct Message {
     pub author: Author,

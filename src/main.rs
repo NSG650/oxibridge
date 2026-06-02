@@ -2,7 +2,6 @@ use std::sync::Arc;
 
 use broadcast::Broadcaster;
 use color_eyre::{eyre::Result, Section};
-use futures::future::OptionFuture;
 use tokio::sync::Mutex;
 use tracing::*;
 use tracing_subscriber::{filter::LevelFilter, layer::SubscriberExt, EnvFilter, Layer};
@@ -61,7 +60,7 @@ async fn main() -> Result<()> {
         discord::DiscordBridge::new(config.clone(), broadcaster.clone(), storage.clone()).await?,
     );
 
-    let irc = if let Some(_) = &config.shared.irc {
+    let irc = if config.shared.irc.is_some() {
         Some(Arc::new(
             irc::IrcBridge::new(config.clone(), broadcaster.clone()).await?,
         ))
