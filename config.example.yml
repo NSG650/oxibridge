@@ -7,6 +7,13 @@ shared:
   discord_token: "PLACEHOLDER"
   telegram_token: "PLACEHOLDER"
 
+  # Optional. Irc bridge
+  # irc:
+  #   server: "PLACEHOLDER"
+  #   port: 6667
+  #   nickname: "Oxibridge"
+  #   use_tls: false
+
   # Optional. Used for avatars on Discord
   r2:
     bucket_name: "oxibridge-avatars"
@@ -21,3 +28,5 @@ groups:
     discord:
       channel: 1234567890000
       webhook: "WEBHOOK_URL_HERE"
+    # Optional. Irc bridge
+    # irc_channel: "#CHANNEL_NAME_HERE"

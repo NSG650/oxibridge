@@ -9,6 +9,7 @@ use tracing::*;
 pub enum Source {
     Discord,
     Telegram,
+    Irc,
 }
 
 #[derive(Debug)]
